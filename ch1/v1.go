@@ -1,33 +1,60 @@
 package ch1
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 type Invoice struct {
 	Customer     string `json:"customer"`
 	Performances []struct {
-		PlayID   string `json:"playID"`
-		Audience int    `json:"audience"`
+		PlayID   string  `json:"playID"`
+		Audience float64 `json:"audience"`
 	} `json:"performances"`
 }
 
 type Play struct {
-	Hamlet struct {
-		Name string `json:"name"`
-		Type string `json:"type"`
-	} `json:"hamlet"`
-	AsLike struct {
-		Name string `json:"name"`
-		Type string `json:"type"`
-	} `json:"as-like"`
-	Othello struct {
-		Name string `json:"name"`
-		Type string `json:"type"`
-	} `json:"othello"`
+	Name string `json:"name"`
+	Type string `json:"type"`
 }
 
-func Statement(invoices Invoice, plays Play) {
-	totalAmount := 0
-	volumeCredits := 0
+func Statement(invoices Invoice, plays map[string]Play) string {
+	totalAmount := 0.0
+	volumeCredits := 0.0
 	result := fmt.Sprintf("Statement for %s\n", invoices.Customer)
-	fmt.Println(totalAmount, volumeCredits, result)
+
+	for _, perf := range invoices.Performances {
+		if _, ok := plays[perf.PlayID]; !ok {
+			continue
+		}
+		play := plays[perf.PlayID]
+
+		thisAmount := 0.0
+		switch play.Type {
+		case "tragedy":
+			thisAmount = 40000
+			if perf.Audience > 30 {
+				thisAmount += 1000 * (perf.Audience - 30)
+			}
+		case "comedy":
+			thisAmount = 30000
+			if perf.Audience > 20 {
+				thisAmount += 10000 + 500*(perf.Audience-20)
+			}
+			thisAmount += 300 * perf.Audience
+		default:
+			panic(fmt.Sprintf(`unknown type:%s`, play.Type))
+		}
+
+		volumeCredits += math.Max(perf.Audience-30, 0)
+		if "comedy" == play.Type {
+			volumeCredits += math.Floor(perf.Audience / 5)
+		}
+		result += fmt.Sprintf(" %s:$%.2f (%0.f seats)\n", play.Name, thisAmount/100, perf.Audience)
+		totalAmount += thisAmount
+	}
+
+	result += fmt.Sprintf("Amount owed is $%.2f\n", totalAmount/100)
+	result += fmt.Sprintf("You earned %0.f credits\n", volumeCredits)
+	return result
 }
