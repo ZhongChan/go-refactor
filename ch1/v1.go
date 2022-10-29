@@ -5,20 +5,12 @@ import (
 	"math"
 )
 
-type Invoice struct {
-	Customer     string `json:"customer"`
-	Performances []struct {
-		PlayID   string  `json:"playID"`
-		Audience float64 `json:"audience"`
-	} `json:"performances"`
+var V1Handler = V1{}
+
+type V1 struct {
 }
 
-type Play struct {
-	Name string `json:"name"`
-	Type string `json:"type"`
-}
-
-func Statement(invoices Invoice, plays map[string]Play) string {
+func (V1) Statement(invoices Invoice, plays map[string]Play) string {
 	totalAmount := 0.0
 	volumeCredits := 0.0
 	result := fmt.Sprintf("Statement for %s\n", invoices.Customer)
