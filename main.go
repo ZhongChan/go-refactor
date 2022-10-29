@@ -33,6 +33,6 @@ func main() {
 		Type: "tragedy",
 	}
 
-	statement := ch1.V1Handler.Statement(invoice, plays)
-	fmt.Print(statement)
+	fmt.Print(ch1.V1Handler.Statement(invoice, plays))
+	fmt.Print(ch1.V2Handler.Statement(invoice, plays))
 }
