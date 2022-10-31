@@ -8,29 +8,24 @@ import (
 )
 
 func main() {
-	bytes, err := ioutil.ReadFile("ch1/invoices.json")
+	invoicesBytes, err := ioutil.ReadFile("ch1/invoices.json")
 	if err != nil {
 		panic(err)
 	}
 	var invoice ch1.Invoice
-	err = json.Unmarshal(bytes, &invoice)
+	err = json.Unmarshal(invoicesBytes, &invoice)
+	if err != nil {
+		panic(err)
+	}
+
+	playsBytes, err := ioutil.ReadFile("ch1/plays.json")
 	if err != nil {
 		panic(err)
 	}
 	plays := make(map[string]ch1.Play, 0)
-	plays["hamlet"] = ch1.Play{
-		Name: "Hamlet",
-		Type: "tragedy",
-	}
-
-	plays["as-like"] = ch1.Play{
-		Name: "As You Like It",
-		Type: "comedy",
-	}
-
-	plays["othello"] = ch1.Play{
-		Name: "Othello",
-		Type: "tragedy",
+	err = json.Unmarshal(playsBytes, &plays)
+	if err != nil {
+		panic(err)
 	}
 
 	fmt.Print(ch1.V1Handler.Statement(invoice, plays))
