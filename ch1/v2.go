@@ -36,7 +36,7 @@ func (V2) Statement(invoices Invoice, plays map[string]Play) string {
 	return result
 }
 
-func amountFor(play Play, perf struct {PlayID string `json:"playID"`;Audience float64 `json:"audience"`}) float64 {
+func amountFor(play Play, perf Performance) float64 {
 	result := 0.0
 	switch play.Type {
 	case "tragedy":
